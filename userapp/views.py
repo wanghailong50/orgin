@@ -81,3 +81,48 @@ def load_map(request):
         "y":y,
     }
     return JsonResponse(data)
+
+
+def map_updata2(request):
+    return render(request, 'load_earth.html')
+
+
+def load_earth(request):
+    print(1111)
+    users=User.objects.all()
+    data=[]
+    for i in users:
+        data.append({'name':i.address,'value':1})
+    '''{name: '北京',value: 34},
+{name: '天津',value: 45},
+{name: '上海',value: 32},
+{name: '重庆',value: 22},
+{name: '河北',value: 34},
+{name: '河南',value: 56},
+{name: '云南',value: 23},
+{name: '辽宁',value: 34},
+{name: '湖南',value: 23},
+{name: '安徽',value: 24},
+{name: '⼭东',value: 23},
+{name: '新疆',value: 34},
+{name: '江苏',value: 32},
+{name: '浙江',value: 54},
+{name: '江⻄',value: 23},
+{name: '湖北',value: 32},
+{name: '⼴⻄',value: 22},
+{name: '⽢肃',value: 12},
+{name: '⼭⻄',value: 33},
+{name: '陕⻄',value: 23},
+{name: '吉林',value: 34},
+{name: '福建',value: 54},
+{name: '贵州',value: 23},
+{name: '⼴东',value: 45},
+{name: '⻘海',value: 23},
+{name: '⻄藏',value: 35},
+{name: '四川',value: 45},
+{name: '宁夏',value: 32},
+{name: '海南',value: 43},
+{name: '台湾',value: 54},
+{name: '⾹港',value: 42},{name: '澳⻔',value: Math.round(Math.random()*1000)}'''
+
+    return JsonResponse(data,safe=False)
