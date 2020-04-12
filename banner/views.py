@@ -67,6 +67,7 @@ def del_data(request):
 
     return HttpResponse()
 
+
 @csrf_exempt
 def change(request):
     id=request.POST.get('id')
