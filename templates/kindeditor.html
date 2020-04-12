@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="{% static 'kindeditor/kindeditor-all-min.js' %}"></script>
+    <script src="{% static 'kindeditor/lang/zh-CN.js' %}"></script>
+    <script>
+        KindEditor.ready(function (K) {
+            window.editor = K.create('#editor_id',{
+                width:"900px",
+                allowFileManager:true,
+                fileManagerJson:'/artapp/get_all_img/',
+                uploadJson:'/artapp/art_img/'
+            });
+        });
+    </script>
+</head>
+<body>
+<textarea id="editor_id" name="content" style="width:700px;height:300px;">
+aaa
+</textarea>
+</body>
+</html>
