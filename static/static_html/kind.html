@@ -1,7 +1,7 @@
 <script>
     $(function () {
         $("#articleTable").jqGrid({
-            url: "",
+            url: "/artapp/get_data/",
             editurl: "",
             datatype: "json",
             styleUI: "Bootstrap",
@@ -36,7 +36,7 @@
 
     // 触发添加文章的模态框
     function showAddArticle() {
-        $('#myModal_one').modal('show');
+        $('#myModal').modal('show');
         KindEditor.create("#editor_id", {
             allowFileManager: true,
             uploadJson: "/artapp/art_img/",

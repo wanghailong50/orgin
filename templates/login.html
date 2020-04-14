@@ -45,7 +45,7 @@
 
                  var myreg=/^[1][3,4,5,7,8][0-9]{9}$/;
                     if(myreg.test(phone)){
-                        alert(phone,11)
+
                         $.ajax({
                     type: 'post',
                     data: {mobile: phone},
@@ -79,7 +79,8 @@
                         if(data==="success"){
                             location.href="{% url 'main:index' %}"
                         }else{
-                            alert('验证码不正确')
+
+                            alert(data)
                         }
                     }
                 });
@@ -114,6 +115,17 @@
                 <div class="input-group">
                     <input type="text" class="form-control" id="basic-url" required name="code">
                 </div>
+
+                <label for="basic-url" class="">账号：</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="username" required name="username">
+                </div>
+
+                <label for="basic-url" class="">密码：</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="password" required name="password">
+                </div>
+
                 <p class="help-block"></p>
                 <div class="input-group">
                     <input class="btn btn-success" type="button" id="loginButtonId" value="登录">

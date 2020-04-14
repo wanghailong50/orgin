@@ -4,6 +4,7 @@ from redis import Redis
 from utils.send import YunPian
 from cmfz_193 import settings
 import re
+from rbacapp.models import UserInfo
 
 red = Redis(host='127.0.0.1',port=6379)
 red.set('name','666',10)
@@ -63,12 +64,40 @@ def check_user(request):
     """
     mobile = request.GET.get('mobile')
     code = request.GET.get('code')
+    # 获取用户名
+    username=request.GET.get('username')
+    password=request.GET.get('password')
 
-    if  red.get(mobile+'_1'):
-        if str(red.get(mobile+'_1'),encoding='utf-8')==code:
+    result=UserInfo.objects.filter(name=username,password=password)[0]
 
-            return HttpResponse('success')
-    return HttpResponse('over')
+
+    # if  red.get(mobile+'_1'):
+    #     if str(red.get(mobile+'_1'),encoding='utf-8')==code:
+
+    #         return HttpResponse('success')
+    # return HttpResponse('over')
+    if result:
+        urls=result.roles.filter(permissions__isnull=False).values("permissions__url","permissions__is_menu",'permissions__title','permissions__id').distinct()
+        url_list=[url['permissions__url'] for url in urls]
+        menu_list=[] #存放菜单url
+        for url in urls:
+            print(url['permissions__title'])
+            if url['permissions__is_menu']:
+                temp={
+                    'title':url['permissions__title'],
+                    'id':url['permissions__id'],
+                    'url':url['permissions__url'],
+
+                }
+                menu_list.append(temp)
+        print(menu_list)
+        request.session['url_list']=url_list      #所有权限列表
+        request.session['menu_list']=menu_list    #该用户具备的菜单权限
+        return HttpResponse('success')
+    else:
+        return HttpResponse('over')
+
+
 
     # 校验信息是否合法
     # 验证码是否在有效期内  使用redis
