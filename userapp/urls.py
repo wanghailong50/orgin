@@ -9,5 +9,6 @@ urlpatterns = [
     path("load_map/", views.load_map),
     path("load_earth/", views.load_earth),
     path("map_updata2/", views.map_updata2),
+    path("register/", views.register),
 
 ]

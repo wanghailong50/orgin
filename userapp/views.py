@@ -126,3 +126,7 @@ def load_earth(request):
 {name: '⾹港',value: 42},{name: '澳⻔',value: Math.round(Math.random()*1000)}'''
 
     return JsonResponse(data,safe=False)
+
+
+def register(request):
+    return render(request,'register.html')
