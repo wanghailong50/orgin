@@ -99,9 +99,18 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <div class="panel-title">
-                            <a href="#dd" data-toggle="collapse" data-parent="#accordion"><h4>专辑管理</h4></a>
+                            <a href="#ddd" data-toggle="collapse" data-parent="#accordion"><h4>专辑管理</h4></a>
                         </div>
                     </div>
+
+                    <div id="ddd" class="panel-collapse collapse ">
+                        <div class="panel-body">
+                            <ul class="nav nav-pills nav-stacked">
+                                <li><a href="Javascript:$('#centerLayout').load('{% static "static_html/album.html" %}')">专辑列表</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
                     <div id="dd" class="panel-collapse collapse ">
                         <div class="panel-body">
                             <ul class="nav nav-pills nav-stacked">

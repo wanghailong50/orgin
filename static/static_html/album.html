@@ -1,0 +1,249 @@
+<script>
+    $(function () {
+        $("#bannerTable1").jqGrid({
+            url: "/albumapp/get_album/",
+            datatype: 'json',
+            styleUI: "Bootstrap",
+            autowidth: true,
+            pager: "#bannerPagerNew1",
+            rowNum: 2,
+            rowList: [2, 5, 10],
+            multiselect:true,
+            viewrecords: true,
+            subGrid : true,
+            subGridRowExpanded : function(subgrid_id, row_id) {
+                addGrid(subgrid_id,row_id)
+            },
+            
+            colNames: ["ID", "专辑名", "章节数", "发布日期","图片"],
+            colModel: [
+                {name: "ID",align:'center'},
+                {name: "name",align:'center'},
+                {name: "setcion_number",align:'center'},
+                {name: "publish",align:'center'},
+
+                {       // 获取图片保存在数据库的路径
+                    name: "head_pic",align:'center', formatter: function (cellvalue, options, rowObject) {
+                        console.log(cellvalue);
+
+                        return "<img style='height:20px;width: 20px' src='/static/"+cellvalue+"'>"
+
+                    }
+                },
+
+            ],
+
+        });
+
+        });
+
+
+
+
+    $("#save").click(function () {
+
+            // 通过formdata获取文件的值
+            var username = $("#username").val();
+            var religious_name = $("#religious_name").val();
+            var password = $("#password").val();
+            var salt = $("#salt").val();
+            var danger = $("#danger").val();
+
+            var head_pic = $("#head_pic")[0].files[0];
+            var address = $("#address").val();
+            var signature = $("#signature").val();
+            var qq = $("#qq").val();
+            var phone = $("#phone").val();
+
+
+            var formData = new FormData();
+            formData.append("username", username);
+            formData.append("religious_name", religious_name);
+            formData.append("password", password);
+            formData.append("salt", salt);
+            formData.append("danger", danger);
+            formData.append("head_pic", head_pic);
+            formData.append("address", address);
+            formData.append("signature", signature);
+            formData.append("qq", qq);
+            formData.append("phone", phone);
+
+
+            $.ajax({
+                url: "/userapp/user_page/",
+                type: "post",
+                data: formData,
+                processData: false,     // 使数据不做处理
+                contentType: false,     // 不设置请求头
+                success: function (rep) {
+                    // 根据保存的返回值进行处理
+                    $('#bannerModal').modal('hide');
+                    // 刷新jqgrid表格
+                    $('#bannerTable1').trigger("reloadGrid");
+                }
+            });
+        });
+
+        function addGrid(subgrid_id,row_id) {
+            subgrid_tableid=subgrid_id+"table";
+            subgrid_pageid=subgrid_id+"pager";
+            $("#"+subgrid_id).html(
+                "<table id='"+subgrid_tableid+"'></table><div id='"+subgrid_pageid+"'></div>"
+            );
+            //生成表格
+            $("#"+subgrid_tableid).jqGrid({
+                url:'/albumapp/get_setcion/?row_id='+row_id,
+                datatype:'json',
+                styleUI:"Bootstrap",
+                autowidth:true,
+                pager:'#'+subgrid_pageid,
+                caption:'章节管理',
+                rowNum:2,
+                rowList:[2,5,10],
+                viewrecords:true,
+                colNames: ["播放","章节名","大小","时长","章节url",],
+                colModel: [ {name:'video_address',align:'center',formatter:function (cellvalue,options,rowObj) {
+
+                        return '<a href="javascript:void(0)" class="glyphicon glyphicon-play" onclick="play(\' ' + cellvalue + ' \')">播放</a>'
+                    }},
+                            {name:'setcion_name',align:'center'},
+                            {name:'video_size',align:'center'},
+                            {name:'video_time',align:'center'},
+                            {name:'video_address',align:'center'}]
+            })
+            //添加按钮
+            $("#"+subgrid_tableid).append('<button class="btn btn-success" onclick="showaddchapter()">添加</button>')
+        }
+        
+        //展示添加章节的模态框
+    function showaddchapter() {
+        $('#setcion_Modal').modal()
+
+    }
+
+    function play(cell) {
+        console.log(cell)
+        var redio=$('#redio1')
+        redio.modal('show');
+        $('#redio').attr('src',cell)
+
+    }
+
+    //保存音频
+    function save() {
+        formdata=new FormData()
+        var redio_data=$("#upload_pic")[0].files[0];
+        alert(redio_data)
+        formdata.append('redio_data',redio_data)
+
+        $.ajax({
+            url:"/albumapp/add_viedo/",
+            type:'post',
+            data:formdata,
+            processData: false,     // 使数据不做处理
+            contentType: false,     // 不设置请求头
+            success:function (msg) {
+                        // 根据保存的返回值进行处理
+                    $('#setcion_Modal').modal('hide');
+                    // 刷新jqgrid表格
+                    $('#bannerTable1').trigger("reloadGrid");
+            }
+        })
+    }
+
+</script>
+<div id="redio1" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <audio id="redio" src="" controls></audio>
+    </div>
+
+</div>
+<div class="page-header">
+    <h2>用户管理</h2>
+</div>
+<ul class="nav nav-tabs ">
+    <li class="active"><a href="#"><b>用户信息</b></a></li>
+</ul>
+
+<div class="panel panel-default" style="padding: 40px">
+    <!-- jqgrid表格的容器 -->
+    <table id="bannerTable1"></table>
+    <div class="alert alert-success" role="alert" id="addBannerMsg" style="display: none">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+        <strong id="msgShow"></strong>
+    </div>
+    <div id="bannerPagerNew1" style="width: auto;height: 50px"></div>
+    <!--模态框的打开方式  可以使用modal方法打开 也可以通过指定data-target与data-toggle两个属性来打开指定的模态框 -->
+    <button class="btn btn-primary" data-aa="@456" data-whatever="@123" id="btn" data-toggle="modal"
+            data-target="#bannerModal">添加
+    </button>
+    <button class="btn btn-warning" id="edit" data-toggle="modal"><span class="glyphicon glyphicon-edit"></span> 修改</button>
+    <button class="btn btn-danger" id="del"  data-toggle="modal">删除</button>
+</div>
+
+
+
+<body>
+
+
+
+<div class="modal fade" id="setcion_Modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width:750px">
+            <!--模态框标题-->
+            <div class="modal-header">
+                <!--
+                    用来关闭模态框的属性:data-dismiss="modal"
+                -->
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h4 class="modal-title">编辑章节信息</h4>
+            </div>
+
+            <!--模态框内容体-->
+            <div class="modal-body">
+                <!--模态框内容体-->
+                <form action="" id="bannerForm">
+                    <div class="modal-body form-horizontal">
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">章节名称：</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="title" id="upload_title" class="form-control"
+                                       placeholder="请输入">
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">状态：</label>
+
+
+                            <div class="col-sm-10">
+                                <select class="form-control" name="status" id="status">
+                                <option value="1" selected="selected">展示</option>
+                                <option value="0">不展示</option>
+                            </select>
+
+                            </div>
+
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-2 control-label">音频：</label>
+                            <div class="col-sm-10">
+                                <input type="file" name="pic" id="upload_pic" class="form-control" placeholder="">
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+            <!--模态页脚-->
+            <div class="modal-footer" id="modal_footer">
+                <button type="button" class="btn btn-primary" id="save" onclick="save()">保存</button>
+                <button type="button" class="btn btn-warning" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>
